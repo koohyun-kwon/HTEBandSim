@@ -116,3 +116,24 @@ obs_gen <- function(n, n.sim, reg.name = c("AK", "AK.bin"), reg.spec, M, cvar.sp
   res <- list(x = x, y = y.mat)
   return(res)
 }
+
+#' Coverage indicator generation
+#'
+#' @param eval a vector of evaluation points in the support of the regressor
+#' @param cb.l a vector of lower confidence band values
+#' @param cb.u a vector of upper confidence band values
+#' @inheritParams true_f
+#'
+#' @return a value of either 1 or 0, indicating coverage or non-coverage, respectively.
+#' @export
+covind_gen <- function(eval, cb.l, cb.u, reg.name = c("AK", "AK.bin"), reg.spec, M, cvar.spec = NULL, scale = NULL){
+
+  f.x <- true_f(reg.name, reg.spec, M, eval, cvar.spec, scale)
+  cov.ind.l <- cb.l <= f.x
+  cov.ind.u <- cb.u >= f.x
+
+  noncov.ind <- (FALSE %in% cov.ind.l) | (FALSE %in% cov.ind.u)
+  cov.ind <- as.numeric(!noncov.ind)
+
+  return(cov.ind)
+}
