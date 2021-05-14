@@ -97,7 +97,6 @@ y_gen <- function(n.sim, reg.name = c("AK", "AK.bin"), reg.spec, M, x, cvar.spec
 #' \describe{
 #' \item{x}{vector of regressors}
 #' \item{y}{matrix of outcome variables with \code{nrow = n} and \code{ncol = n.sim}}
-#' \item{f.x}{a vector of true regression function values evaluated at \code{x}}
 #' }
 #' @export
 #'
@@ -113,8 +112,7 @@ obs_gen <- function(n, n.sim, reg.name = c("AK", "AK.bin"), reg.spec, M, cvar.sp
   }
 
   y.mat <- y_gen(n.sim, reg.name, reg.spec, M, x, cvar.spec, dist, scale)
-  f.x <- true_f(reg.name, reg.spec, M, x, cvar.spec, scale)
 
-  res <- list(x = x, y = y.mat, f.x = f.x)
+  res <- list(x = x, y = y.mat)
   return(res)
 }

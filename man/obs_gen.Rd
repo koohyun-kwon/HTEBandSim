@@ -50,7 +50,6 @@ list of following components
 \describe{
 \item{x}{vector of regressors}
 \item{y}{matrix of outcome variables with \code{nrow = n} and \code{ncol = n.sim}}
-\item{f.x}{a vector of true regression function values evaluated at \code{x}}
 }
 }
 \description{
