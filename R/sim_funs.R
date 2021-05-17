@@ -89,7 +89,8 @@ y_gen <- function(n.sim, reg.name = c("AK", "AK.bin"), reg.spec, M, x, cvar.spec
 #'
 #' @param n number of observations
 #' @inheritParams y_gen
-#' @param x.spec distribution of the regressor, either uniform distribution \code{"unif"} or beta distribution \code{"beta"}
+#' @param x.spec distribution of the regressor, either uniform distribution (\code{"unif"}) or
+#' normalized beta(2, 2) distribution (\code{"beta"}), both with the support of \eqn{[-1, 1]}.
 #' @param x.l lower end of the support of the regressor.
 #' @param x.u upper end of the support of the regressor.
 #'
@@ -136,4 +137,53 @@ covind_gen <- function(eval, cb.l, cb.u, reg.name = c("AK", "AK.bin"), reg.spec,
   cov.ind <- as.numeric(!noncov.ind)
 
   return(cov.ind)
+}
+
+
+#' Weighted length of a confidence band
+#'
+#' Computes weighted length of a confidence band, where the weights are given
+#' by the design of the regressor.
+#'
+#' @inheritParams covind_gen
+#' @param x.spec distribution of the regressor, which determines the weights. Supports
+#' the uniform distribution (\code{"unif"}) and the normalized beta(2, 2) distribution (\code{"beta"}),
+#' both with the support of \eqn{[-1, 1]}.
+#'
+#' @return a scalar value of weighted length.
+#' @export
+weighted_len <- function(eval, cb.l, cb.u, x.spec = c("unif", "beta")){
+
+  x.spec <- match.arg(x.spec)
+
+  cb.len <- cb.u - cb.l
+  weights <-
+    if(x.spec == "unif"){
+      rep(1 / length(eval), length(eval))
+    }else if(x.spec == "beta"){
+      stats::dbeta(eval, 2, 2)
+    }
+
+  res <- mean(cb.len * weights) / sum(weights)
+  return(res)
+}
+
+#' Coverage and length results generation
+#'
+#' Generates 1) coverage indicator, 2) weighted length, and 3) supremum length
+#' given a confidence band.
+#'
+#' @inheritParams covind_gen
+#' @inheritParams weighted_len
+#'
+#' @return a triplet of 1) coverage indicator, 2) weighted length, and 3) supremum length
+#' @export
+all_gen <- function(eval, cb.l, cb.u, reg.name = c("AK", "AK.bin"), reg.spec, M, cvar.spec = NULL, scale = NULL,
+                    x.spec = c("unif", "beta")){
+
+  cov.ind <- covind_gen(eval, cb.l, cb.u, reg.name, reg.spec, M, cvar.spec, scale)
+  len.w <- weighted_len(eval, cb.l, cb.u, x.spec)
+  len.sup <- max(cb.u - cb.l)
+
+  return(c(cov.ind, len.w, len.sup))
 }

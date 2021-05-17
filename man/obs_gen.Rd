@@ -39,7 +39,8 @@ in \code{reg.name}.}
 
 \item{scale}{scale parameter, a positive constant multiplied to the noise.}
 
-\item{x.spec}{distribution of the regressor, either uniform distribution \code{"unif"} or beta distribution \code{"beta"}}
+\item{x.spec}{distribution of the regressor, either uniform distribution (\code{"unif"}) or
+normalized beta(2, 2) distribution (\code{"beta"}), both with the support of \eqn{[-1, 1]}.}
 
 \item{x.l}{lower end of the support of the regressor.}
 
