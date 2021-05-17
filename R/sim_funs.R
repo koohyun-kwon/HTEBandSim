@@ -164,7 +164,7 @@ weighted_len <- function(eval, cb.l, cb.u, x.spec = c("unif", "beta")){
       stats::dbeta(eval, 2, 2)
     }
 
-  res <- mean(cb.len * weights) / sum(weights)
+  res <- sum(cb.len * weights) / sum(weights)
   return(res)
 }
 
