@@ -170,20 +170,29 @@ weighted_len <- function(eval, cb.l, cb.u, x.spec = c("unif", "beta")){
 
 #' Coverage and length results generation
 #'
-#' Generates 1) coverage indicator, 2) weighted length, and 3) supremum length
-#' given a confidence band.
+#' Generates 1) coverage indicator, 2) confidence band lengths at each evaluation points and 3) bandwidths used
+#' at each evaluation points given a confidence band.
 #'
 #' @inheritParams covind_gen
 #' @inheritParams weighted_len
+#' @param h.t bandwidth used at each evaluation points for treated observations or for all observations
+#' if there is no treated/control distinction.
+#' @param h.c bandwidth used at each evaluation points for control observations;
+#' it can be left unspecified if there is no treated/control distinction.
 #'
-#' @return a triplet of 1) coverage indicator, 2) weighted length, and 3) supremum length
+#' @return a vector of 1) coverage indicator, 2) a vector of confidence band lengths at each evaluation points and
+#' 3) a vector of bandwidths used at each evaluation points given a confidence band for treated and control observations.
 #' @export
-all_gen <- function(eval, cb.l, cb.u, reg.name = c("AK", "AK.bin"), reg.spec, M, cvar.spec = NULL, scale = NULL,
-                    x.spec = c("unif", "beta")){
+all_gen <- function(eval, cb.l, cb.u, h.t, h.c = h.t,
+                    reg.name = c("AK", "AK.bin"), reg.spec, M, cvar.spec = NULL, scale = NULL){
 
   cov.ind <- covind_gen(eval, cb.l, cb.u, reg.name, reg.spec, M, cvar.spec, scale)
-  len.w <- weighted_len(eval, cb.l, cb.u, x.spec)
-  len.sup <- max(cb.u - cb.l)
+  len.res <- cb.u - cb.l
+  res <- c(cov.ind, len.res, h.t, h.c, eval)
+  neval <- length(eval)
+  res.name <- c("cov", paste("len", 1:neval, sep = "."), paste("ht", 1:neval, sep = "."),
+                paste("hc", 1:neval, sep = "."), paste("eval", 1:neval, sep = "."))
+  names(res) <- res.name
 
-  return(c(cov.ind, len.w, len.sup))
+  return(res)
 }
