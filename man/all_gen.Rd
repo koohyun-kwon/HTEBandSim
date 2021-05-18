@@ -8,12 +8,14 @@ all_gen(
   eval,
   cb.l,
   cb.u,
+  h.t,
+  h.c = h.t,
   reg.name = c("AK", "AK.bin"),
   reg.spec,
   M,
   cvar.spec = NULL,
   scale = NULL,
-  x.spec = c("unif", "beta")
+  x.spec
 )
 }
 \arguments{
@@ -22,6 +24,12 @@ all_gen(
 \item{cb.l}{a vector of lower confidence band values}
 
 \item{cb.u}{a vector of upper confidence band values}
+
+\item{h.t}{bandwidth used at each evaluation points for treated observations or for all observations
+if there is no treated/control distinction.}
+
+\item{h.c}{bandwidth used at each evaluation points for control observations;
+it can be left unspecified if there is no treated/control distinction.}
 
 \item{reg.name}{class of regression functions to be used; \code{"AK"} denotes regression functions
 in Section 5 of Armstrong and Kolesár (2020); \code{"AK.bin"} denotes denotes the case where
@@ -42,9 +50,12 @@ the uniform distribution (\code{"unif"}) and the normalized beta(2, 2) distribut
 both with the support of \eqn{[-1, 1]}.}
 }
 \value{
-a triplet of 1) coverage indicator, 2) weighted length, and 3) supremum length
+a vector of 1) coverage indicator, 2) weighted length, 3) supremum length,
+4) a vector of confidence band lengths at each evaluation points and
+5) a vector of bandwidths used at each evaluation points given a confidence band for treated and control observations,
+6) a vector of evaluation points.
 }
 \description{
-Generates 1) coverage indicator, 2) weighted length, and 3) supremum length
-given a confidence band.
+Generates 1) coverage indicator, 2) confidence band lengths at each evaluation points and 3) bandwidths used
+at each evaluation points given a confidence band.
 }

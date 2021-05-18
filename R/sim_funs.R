@@ -180,17 +180,22 @@ weighted_len <- function(eval, cb.l, cb.u, x.spec = c("unif", "beta")){
 #' @param h.c bandwidth used at each evaluation points for control observations;
 #' it can be left unspecified if there is no treated/control distinction.
 #'
-#' @return a vector of 1) coverage indicator, 2) a vector of confidence band lengths at each evaluation points and
-#' 3) a vector of bandwidths used at each evaluation points given a confidence band for treated and control observations.
+#' @return a vector of 1) coverage indicator, 2) weighted length, 3) supremum length,
+#' 4) a vector of confidence band lengths at each evaluation points and
+#' 5) a vector of bandwidths used at each evaluation points given a confidence band for treated and control observations,
+#' 6) a vector of evaluation points.
 #' @export
 all_gen <- function(eval, cb.l, cb.u, h.t, h.c = h.t,
-                    reg.name = c("AK", "AK.bin"), reg.spec, M, cvar.spec = NULL, scale = NULL){
+                    reg.name = c("AK", "AK.bin"), reg.spec, M, cvar.spec = NULL, scale = NULL, x.spec){
 
   cov.ind <- covind_gen(eval, cb.l, cb.u, reg.name, reg.spec, M, cvar.spec, scale)
-  len.res <- cb.u - cb.l
-  res <- c(cov.ind, len.res, h.t, h.c, eval)
+  len.all <- cb.u - cb.l
+  len.w <- weighted_len(eval, cb.l, cb.u, x.spec)
+  len.sup <- max(len.all)
+
+  res <- c(cov.ind, len.w, len.sup, len.all, h.t, h.c, eval)
   neval <- length(eval)
-  res.name <- c("cov", paste("len", 1:neval, sep = "."), paste("ht", 1:neval, sep = "."),
+  res.name <- c("cov", "len.w", "len.sup", paste("len", 1:neval, sep = "."), paste("ht", 1:neval, sep = "."),
                 paste("hc", 1:neval, sep = "."), paste("eval", 1:neval, sep = "."))
   names(res) <- res.name
 
