@@ -4,7 +4,7 @@
 \alias{CB_RBC}
 \title{Confidence Band Using Bootstrap}
 \usage{
-CB_RBC(y, x, eval, B = 1000, level = 0.95, fixed = TRUE)
+CB_RBC(y, x, eval, B = 1000, level = 0.95, fixed = TRUE, bwselect = "mse-dpi")
 }
 \arguments{
 \item{y}{dependent variable.}
@@ -20,6 +20,8 @@ CB_RBC(y, x, eval, B = 1000, level = 0.95, fixed = TRUE)
 
 \item{fixed}{calculates the fixed length if \code{TRUE}; otherwise, CB is calculated
 according to Remark 2 of Cheng and Chen (2019).}
+
+\item{bwselect}{bandwidth selection method of \code{\link[nprobust]{lprobust}}; default is \code{"mse-dpi"}.}
 }
 \value{
 a data frame containing index set and corresponding confidence band values

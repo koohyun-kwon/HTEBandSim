@@ -43,6 +43,7 @@ de_lpr <- function(X, Y, h, tau = 1, x_seq) {
 #' \code{level = 0.95}.
 #' @param fixed calculates the fixed length if \code{TRUE}; otherwise, CB is calculated
 #' according to Remark 2 of Cheng and Chen (2019).
+#' @param bwselect bandwidth selection method of \code{\link[nprobust]{lprobust}}; default is \code{"mse-dpi"}.
 #'
 #' @return a data frame containing index set and corresponding confidence band values
 #' @export
@@ -60,9 +61,10 @@ de_lpr <- function(X, Y, h, tau = 1, x_seq) {
 #' eval <- seq(from = -1, to = 1, length.out = 20)
 #' CB_RBC(y, x, eval, 2)
 #' CB_RBC(y, x, eval, 2, fixed = FALSE)
-CB_RBC <- function(y, x, eval, B = 1000, level = 0.95, fixed = TRUE){
+CB_RBC <- function(y, x, eval, B = 1000, level = 0.95, fixed = TRUE, bwselect = "mse-dpi"){
 
-  est_res <- nprobust::lprobust(y, x, eval, bwselect = "mse-dpi")
+  print(bwselect)
+  est_res <- nprobust::lprobust(y, x, eval, bwselect = bwselect)
   est_vec <- est_res$Estimate[, "tau.bc"]
   h.bw <- est_res$Estimate[, "h"]
   b.bw <- est_res$Estimate[, "b"]
