@@ -62,7 +62,7 @@ de_lpr <- function(X, Y, h, tau = 1, x_seq) {
 #' CB.RBC(y, x, eval, 2, fixed = FALSE)
 CB.RBC <- function(y, x, eval, B = 1000, level = 0.95, fixed = TRUE){
 
-  est_res <- nprobust::lprobust(y, x, eval)
+  est_res <- nprobust::lprobust(y, x, eval, bwselect = "mse-dpi")
   est_vec <- est_res$Estimate[, "tau.bc"]
   h.bw <- est_res$Estimate[, "h"]
   b.bw <- est_res$Estimate[, "b"]
@@ -114,6 +114,6 @@ CB.RBC <- function(y, x, eval, B = 1000, level = 0.95, fixed = TRUE){
 
   }
 
-  res <- data.frame(eval = eval, cb.lower = res_l, cb.upper = res_u)
+  res <- data.frame(eval = eval, cb.lower = res_l, cb.upper = res_u, h = h.bw)
   return(res)
 }
