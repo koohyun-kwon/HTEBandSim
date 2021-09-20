@@ -51,9 +51,11 @@ both with the support of \eqn{[-1, 1]}.}
 }
 \value{
 a vector of 1) coverage indicator, 2) weighted length, 3) supremum length,
-4) a vector of confidence band lengths at each evaluation points and
+4) a vector of confidence band lengths at each evaluation points
 5) a vector of bandwidths used at each evaluation points given a confidence band for treated and control observations,
-6) a vector of evaluation points.
+6) a vector of evaluation points
+7) a vector of "lower non-coverage length"
+8) a vector of "upper non-coverage length"
 }
 \description{
 Generates 1) coverage indicator, 2) confidence band lengths at each evaluation points and 3) bandwidths used

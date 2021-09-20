@@ -139,6 +139,30 @@ covind_gen <- function(eval, cb.l, cb.u, reg.name = c("AK", "AK.bin"), reg.spec,
   return(cov.ind)
 }
 
+#' Non-coverage "length" calculation
+#'
+#' @param eval a vector of evaluation points in the support of the regressor
+#' @param cb.l a vector of lower confidence band values
+#' @param cb.u a vector of upper confidence band values
+#' @inheritParams true_f
+#'
+#' @return a vector of length \code{2 * len(eval)}, with a vector of lower non-coverage length
+#' and a vector of upper non-coverage length
+#' @export
+noncov_len <- function(eval, cb.l, cb.u, reg.name = c("AK", "AK.bin"), reg.spec,
+                       M, cvar.spec = NULL, scale = NULL){
+
+  f.x <- true_f(reg.name, reg.spec, M, eval, cvar.spec, scale)
+
+  cov.ind.l <- as.numeric(cb.l <= f.x)
+  cov.ind.u <- as.numeric(cb.u >= f.x)
+
+  noncov.len.l <- (cb.l - f.x) * (1 - cov.ind.l)
+  noncov.len.u <- (f.x - cb.u) * (1 - cov.ind.u)
+
+  return(c(noncov.len.l, noncov.len.u))
+}
+
 
 #' Weighted length of a confidence band
 #'
@@ -181,9 +205,11 @@ weighted_len <- function(eval, cb.l, cb.u, x.spec = c("unif", "beta")){
 #' it can be left unspecified if there is no treated/control distinction.
 #'
 #' @return a vector of 1) coverage indicator, 2) weighted length, 3) supremum length,
-#' 4) a vector of confidence band lengths at each evaluation points and
+#' 4) a vector of confidence band lengths at each evaluation points
 #' 5) a vector of bandwidths used at each evaluation points given a confidence band for treated and control observations,
-#' 6) a vector of evaluation points.
+#' 6) a vector of evaluation points
+#' 7) a vector of "lower non-coverage length"
+#' 8) a vector of "upper non-coverage length"
 #' @export
 all_gen <- function(eval, cb.l, cb.u, h.t, h.c = h.t,
                     reg.name = c("AK", "AK.bin"), reg.spec, M, cvar.spec = NULL, scale = NULL, x.spec){
@@ -192,11 +218,13 @@ all_gen <- function(eval, cb.l, cb.u, h.t, h.c = h.t,
   len.all <- cb.u - cb.l
   len.w <- weighted_len(eval, cb.l, cb.u, x.spec)
   len.sup <- max(len.all)
+  len.noncov <- noncov_len(eval, cb.l, cb.u, reg.name, reg.spec, M, cvar.spec, scale)
 
-  res <- c(cov.ind, len.w, len.sup, len.all, h.t, h.c, eval)
+  res <- c(cov.ind, len.w, len.sup, len.all, h.t, h.c, eval, len.noncov)
   neval <- length(eval)
   res.name <- c("cov", "len.w", "len.sup", paste("len", 1:neval, sep = "."), paste("ht", 1:neval, sep = "."),
-                paste("hc", 1:neval, sep = "."), paste("eval", 1:neval, sep = "."))
+                paste("hc", 1:neval, sep = "."), paste("eval", 1:neval, sep = "."),
+                paste("ncl.l", 1:neval, sep = "."), paste("ncl.u", 1:neval, sep = "."))
   names(res) <- res.name
 
   return(res)
