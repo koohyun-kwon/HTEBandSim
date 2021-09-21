@@ -12,7 +12,7 @@ CB_RBC(
   level = 0.95,
   fixed = TRUE,
   bwselect = "mse-dpi",
-  h.prov = NULL
+  C = NULL
 )
 }
 \arguments{
@@ -31,11 +31,10 @@ CB_RBC(
 according to Remark 2 of Cheng and Chen (2019).}
 
 \item{bwselect}{bandwidth selection method of \code{\link[nprobust]{lprobust}};
-default is \code{"mse-dpi"}. Another option is \code{"h.prov"}, which uses the bandwidth
-specified in \code{h.prov}.}
+default is \code{"mse-dpi"}. Another option is \code{"bw.honest"}, which uses the bandwidth
+calculated by \code{HTEBand} package.}
 
-\item{h.prov}{provided bandwidth in the same length as \code{eval};
-default is \code{h.prov = NULL}.}
+\item{C}{bound on the second derivative; only relevant when \code{bwselect = "bw.honest"}.}
 }
 \value{
 a data frame containing index set and corresponding confidence band values
@@ -53,6 +52,7 @@ y <- x + rnorm(500, 0, 1/4)
 eval <- seq(from = -1, to = 1, length.out = 20)
 CB_RBC(y, x, eval, 2)
 CB_RBC(y, x, eval, 2, fixed = FALSE)
+CB_RBC(y, x, eval, 2, fixed = FALSE, bwselect = "bw.honest", C = 1)
 }
 \references{
 {

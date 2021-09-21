@@ -44,10 +44,9 @@ de_lpr <- function(X, Y, h, tau = 1, x_seq) {
 #' @param fixed calculates the fixed length if \code{TRUE}; otherwise, CB is calculated
 #' according to Remark 2 of Cheng and Chen (2019).
 #' @param bwselect bandwidth selection method of \code{\link[nprobust]{lprobust}};
-#' default is \code{"mse-dpi"}. Another option is \code{"h.prov"}, which uses the bandwidth
-#' specified in \code{h.prov}.
-#' @param h.prov provided bandwidth in the same length as \code{eval};
-#' default is \code{h.prov = NULL}.
+#' default is \code{"mse-dpi"}. Another option is \code{"bw.honest"}, which uses the bandwidth
+#' calculated by \code{HTEBand} package.
+#' @param C bound on the second derivative; only relevant when \code{bwselect = "bw.honest"}.
 #'
 #' @return a data frame containing index set and corresponding confidence band values
 #' @export
@@ -65,19 +64,20 @@ de_lpr <- function(X, Y, h, tau = 1, x_seq) {
 #' eval <- seq(from = -1, to = 1, length.out = 20)
 #' CB_RBC(y, x, eval, 2)
 #' CB_RBC(y, x, eval, 2, fixed = FALSE)
+#' CB_RBC(y, x, eval, 2, fixed = FALSE, bwselect = "bw.honest", C = 1)
 CB_RBC <- function(y, x, eval, B = 1000, level = 0.95, fixed = TRUE, bwselect = "mse-dpi",
-                   h.prov = NULL){
+                   C = NULL){
 
   print(bwselect)
 
-  if(bwselect != "provided"){
+  if(bwselect != "bw.honest"){
     est_res <- nprobust::lprobust(y, x, eval, bwselect = bwselect)
     est_vec <- est_res$Estimate[, "tau.bc"]
     h.bw <- est_res$Estimate[, "h"]
     b.bw <- est_res$Estimate[, "b"]
   }else{
-    h.bw <- b.bw <- h.prov
-    est_res <- nprobust::lprobust(y, x, eval, h = h.prov, b = h.prov)
+    h.bw <- b.bw <- HTEBand::bw_Hol_reg(y, x, eval, C)
+    est_res <- nprobust::lprobust(y, x, eval, h = h.bw, b = b.bw)
     est_vec <- est_res$Estimate[, "tau.bc"]
   }
 
