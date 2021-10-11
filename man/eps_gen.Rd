@@ -4,14 +4,15 @@
 \alias{eps_gen}
 \title{Noise generation}
 \usage{
-eps_gen(n.sim, cvar.spec, dist = c("norm", "lnorm"), x, scale)
+eps_gen(n.sim, cvar.spec, dist = c("norm", "lnorm", "logis"), x, scale)
 }
 \arguments{
 \item{n.sim}{number of simulation to use.}
 
 \item{cvar.spec}{specification for conditional variance function, one of \code{c("homo", "het.AK")}.}
 
-\item{dist}{distribution for noise function; either normal (\code{"norm"}) or log-normal distribution (\code{"lnorm"}).}
+\item{dist}{distribution for noise function; choose among normal (\code{"norm"}),
+log-normal distribution (\code{"lnorm"}) or logistic (\code{"logis"}).}
 
 \item{x}{a vector of regressors}
 

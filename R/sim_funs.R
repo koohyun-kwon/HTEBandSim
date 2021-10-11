@@ -2,7 +2,8 @@
 #'
 #' @param n.sim number of simulation to use.
 #' @inheritParams cvar.fun
-#' @param dist distribution for noise function; either normal (\code{"norm"}) or log-normal distribution (\code{"lnorm"}).
+#' @param dist distribution for noise function; choose among normal (\code{"norm"}),
+#' log-normal distribution (\code{"lnorm"}) or logistic (\code{"logis"}).
 #' @param scale scale parameter, a positive constant multiplied to the noise.
 #'
 #' @return matrix of noise terms with \code{nrow = length(x)} and \code{ncol = n.sim}.
@@ -11,7 +12,8 @@
 #' @examples
 #' x <- seq(-1, 1, length.out = 100)
 #' eps_gen(150, "het.AK", "lnorm", x, 1/2)
-eps_gen <- function(n.sim, cvar.spec, dist = c("norm", "lnorm"), x, scale){
+eps_gen <- function(n.sim, cvar.spec, dist = c("norm", "lnorm", "logis"),
+                    x, scale){
 
   dist <- match.arg(dist)
   len.all <- n.sim * length(x)
@@ -21,6 +23,8 @@ eps_gen <- function(n.sim, cvar.spec, dist = c("norm", "lnorm"), x, scale){
       stats::rnorm(len.all)
     }else if(dist == "lnorm"){
       (stats::rlnorm(len.all) - exp(1/2)) / sqrt(exp(2) - exp(1)) # location-scale normalization to yield 0 mean and unit variance
+    }else if(dist == "logis"){
+      stats::rlogis(len.all, 0, sqrt(3) / pi)
     }
 
   res <- matrix(sqrt(cvar.all) * rn * scale, length(x), n.sim)

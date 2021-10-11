@@ -35,7 +35,8 @@ in \code{reg.name}.}
 
 \item{cvar.spec}{specification for conditional variance function, one of \code{c("homo", "het.AK")}.}
 
-\item{dist}{distribution for noise function; either normal (\code{"norm"}) or log-normal distribution (\code{"lnorm"}).}
+\item{dist}{distribution for noise function; choose among normal (\code{"norm"}),
+log-normal distribution (\code{"lnorm"}) or logistic (\code{"logis"}).}
 
 \item{scale}{scale parameter, a positive constant multiplied to the noise.}
 
