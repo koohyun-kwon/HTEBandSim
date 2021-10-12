@@ -22,7 +22,12 @@ eps_gen <- function(n.sim, cvar.spec, dist = c("norm", "lnorm", "logis"),
     if(dist == "norm"){
       stats::rnorm(len.all)
     }else if(dist == "lnorm"){
-      (stats::rlnorm(len.all) - exp(1/2)) / sqrt(exp(2) - exp(1)) # location-scale normalization to yield 0 mean and unit variance
+      # My CB doesn't work well for this specification
+      # Kurtosis = 76 >> 3 for normal => dist'n is too fat-tailed
+      # In comparison, logistic noise has kurtosis = 4, moderately larger than 3
+
+      # location-scale normalization to yield 0 mean and unit variance
+      (stats::rlnorm(len.all) - exp(1/2)) / sqrt(exp(2) - exp(1))
     }else if(dist == "logis"){
       stats::rlogis(len.all, 0, sqrt(3) / pi)
     }
