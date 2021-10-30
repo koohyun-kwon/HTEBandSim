@@ -10,12 +10,13 @@ all_gen(
   cb.u,
   h.t,
   h.c = h.t,
-  reg.name = c("AK", "AK.bin"),
+  reg.name = c("AK", "AK.bin", "custom"),
   reg.spec,
   M,
   cvar.spec = NULL,
   scale = NULL,
-  x.spec
+  x.spec,
+  custom.fx = NULL
 )
 }
 \arguments{
@@ -48,6 +49,8 @@ in \code{reg.name}.}
 \item{x.spec}{distribution of the regressor, which determines the weights. Supports
 the uniform distribution (\code{"unif"}) and the normalized beta(2, 2) distribution (\code{"beta"}),
 both with the support of \eqn{[-1, 1]}.}
+
+\item{custom.fx}{a vector of custom f(x) values}
 }
 \value{
 a vector of 1) coverage indicator, 2) weighted length, 3) supremum length,

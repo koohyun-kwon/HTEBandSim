@@ -133,12 +133,19 @@ obs_gen <- function(n, n.sim, reg.name = c("AK", "AK.bin"), reg.spec, M, cvar.sp
 #' @param cb.l a vector of lower confidence band values
 #' @param cb.u a vector of upper confidence band values
 #' @inheritParams true_f
+#' @param custom.fx a vector of custom f(x) values
 #'
 #' @return a value of either 1 or 0, indicating coverage or non-coverage, respectively.
 #' @export
-covind_gen <- function(eval, cb.l, cb.u, reg.name = c("AK", "AK.bin"), reg.spec, M, cvar.spec = NULL, scale = NULL){
+covind_gen <- function(eval, cb.l, cb.u, reg.name = c("AK", "AK.bin", "custom"),
+                       reg.spec, M, cvar.spec = NULL, scale = NULL,
+                       custom.fx = NULL){
 
-  f.x <- true_f(reg.name, reg.spec, M, eval, cvar.spec, scale)
+  if(reg.name != "custom"){
+    f.x <- true_f(reg.name, reg.spec, M, eval, cvar.spec, scale)
+  }else{
+    f.x <- custom.fx
+  }
   cov.ind.l <- cb.l <= f.x
   cov.ind.u <- cb.u >= f.x
 
@@ -154,14 +161,20 @@ covind_gen <- function(eval, cb.l, cb.u, reg.name = c("AK", "AK.bin"), reg.spec,
 #' @param cb.l a vector of lower confidence band values
 #' @param cb.u a vector of upper confidence band values
 #' @inheritParams true_f
+#' @param custom.fx a vector of custom f(x) values
 #'
 #' @return a vector of length \code{2 * len(eval)}, with a vector of lower non-coverage length
 #' and a vector of upper non-coverage length
 #' @export
-noncov_len <- function(eval, cb.l, cb.u, reg.name = c("AK", "AK.bin"), reg.spec,
-                       M, cvar.spec = NULL, scale = NULL){
+noncov_len <- function(eval, cb.l, cb.u, reg.name = c("AK", "AK.bin", "custom"),
+                       reg.spec, M, cvar.spec = NULL, scale = NULL,
+                       custom.fx = NULL){
 
-  f.x <- true_f(reg.name, reg.spec, M, eval, cvar.spec, scale)
+  if(reg.name != "custom"){
+    f.x <- true_f(reg.name, reg.spec, M, eval, cvar.spec, scale)
+  }else{
+    f.x <- custom.fx
+  }
 
   cov.ind.l <- as.numeric(cb.l <= f.x)
   cov.ind.u <- as.numeric(cb.u >= f.x)
@@ -221,13 +234,22 @@ weighted_len <- function(eval, cb.l, cb.u, x.spec = c("unif", "beta")){
 #' 8) a vector of "upper non-coverage length"
 #' @export
 all_gen <- function(eval, cb.l, cb.u, h.t, h.c = h.t,
-                    reg.name = c("AK", "AK.bin"), reg.spec, M, cvar.spec = NULL, scale = NULL, x.spec){
+                    reg.name = c("AK", "AK.bin", "custom"), reg.spec, M,
+                    cvar.spec = NULL, scale = NULL, x.spec,
+                    custom.fx = NULL){
 
-  cov.ind <- covind_gen(eval, cb.l, cb.u, reg.name, reg.spec, M, cvar.spec, scale)
+  if(reg.name == "custom"){
+    res.spec <- NULL
+    M <- NULL
+  }
+
+  cov.ind <- covind_gen(eval, cb.l, cb.u, reg.name, reg.spec, M, cvar.spec, scale,
+                        custom.fx)
   len.all <- cb.u - cb.l
   len.w <- weighted_len(eval, cb.l, cb.u, x.spec)
   len.sup <- max(len.all)
-  len.noncov <- noncov_len(eval, cb.l, cb.u, reg.name, reg.spec, M, cvar.spec, scale)
+  len.noncov <- noncov_len(eval, cb.l, cb.u, reg.name, reg.spec, M, cvar.spec, scale,
+                           custom.fx)
 
   res <- c(cov.ind, len.w, len.sup, len.all, h.t, h.c, eval, len.noncov)
   neval <- length(eval)

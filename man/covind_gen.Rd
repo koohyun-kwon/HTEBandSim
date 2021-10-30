@@ -8,11 +8,12 @@ covind_gen(
   eval,
   cb.l,
   cb.u,
-  reg.name = c("AK", "AK.bin"),
+  reg.name = c("AK", "AK.bin", "custom"),
   reg.spec,
   M,
   cvar.spec = NULL,
-  scale = NULL
+  scale = NULL,
+  custom.fx = NULL
 )
 }
 \arguments{
@@ -35,6 +36,8 @@ in \code{reg.name}.}
 \item{cvar.spec}{specification for conditional variance function, one of \code{c("homo", "het.AK")}.}
 
 \item{scale}{scale parameter, a positive constant multiplied to the noise.}
+
+\item{custom.fx}{a vector of custom f(x) values}
 }
 \value{
 a value of either 1 or 0, indicating coverage or non-coverage, respectively.
